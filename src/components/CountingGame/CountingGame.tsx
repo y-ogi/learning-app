@@ -25,10 +25,7 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
 
   const {
     isInitialized,
-    initializeAudio,
     preloadAudio,
-    playNumber,
-    playEffect,
   } = useAudio();
 
   // 新しい問題を生成
