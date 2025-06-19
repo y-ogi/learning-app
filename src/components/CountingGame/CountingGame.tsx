@@ -33,6 +33,7 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
 
   // 新しい問題を生成
   const generateNewProblem = async () => {
+    console.log('=== generateNewProblem called ===');
     const range = difficultyRanges[difficulty];
     const target = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
     setTargetNumber(target);
@@ -61,10 +62,15 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
     setShowResult(false);
 
     // 音声が初期化されていれば、目標数字を読み上げ
+    console.log(`Audio check - isInitialized: ${isInitialized}, target: ${target}`);
     if (isInitialized) {
+      console.log('Audio is initialized, playing number after delay...');
       setTimeout(async () => {
+        console.log(`About to play number: ${target}`);
         await playNumber(target);
       }, 500); // 少し遅延して読み上げ
+    } else {
+      console.log('Audio not initialized yet');
     }
   };
 

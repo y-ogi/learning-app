@@ -8,7 +8,7 @@ type GameMode = 'home' | 'numbers' | 'counting';
 function App() {
   const [currentMode, setCurrentMode] = useState<GameMode>('home');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
-  const [showDebug, setShowDebug] = useState(false);
+  const [showDebug, setShowDebug] = useState(true); // デバッグを常に表示
 
   if (currentMode === 'numbers') {
     return (
