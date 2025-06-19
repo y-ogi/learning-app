@@ -47,7 +47,7 @@ export class AudioManager {
           console.log('Silent sound played successfully');
           resolve();
         });
-        silentSound.once('playerror', (id, error) => {
+        silentSound.once('playerror', (_id, error) => {
           console.error('Silent sound play error:', error);
           reject(new Error('Audio initialization failed'));
         });
@@ -166,10 +166,10 @@ export class AudioManager {
           onplay: () => {
             console.log(`Successfully started playing: ${url}`);
           },
-          onplayerror: (id, error) => {
+          onplayerror: (_id, error) => {
             console.error(`Play error for ${url}:`, error);
           },
-          onloaderror: (id, error) => {
+          onloaderror: (_id, error) => {
             console.error(`Load error for ${url}:`, error);
           },
         });
