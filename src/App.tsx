@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NumberDisplay } from './components/NumberDisplay/NumberDisplay';
-import { CountingGameSimple } from './components/CountingGame/CountingGameSimple';
+import { CountingGame } from './components/CountingGame/CountingGame';
 
 type GameMode = 'home' | 'numbers' | 'counting';
 
@@ -35,7 +35,7 @@ function App() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
         </button>
-        <CountingGameSimple difficulty={difficulty} />
+        <CountingGame difficulty={difficulty} />
       </div>
     );
   }

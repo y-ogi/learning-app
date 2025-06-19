@@ -25,11 +25,14 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
 
   const {
     isInitialized,
+    initializeAudio,
     preloadAudio,
+    playNumber,
+    playEffect,
   } = useAudio();
 
   // 新しい問題を生成
-  const generateNewProblem = () => {
+  const generateNewProblem = async () => {
     const range = difficultyRanges[difficulty];
     const target = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
     setTargetNumber(target);
@@ -56,6 +59,13 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
     setOptions(newOptions);
     setSelectedAnswer(null);
     setShowResult(false);
+
+    // 音声が初期化されていれば、目標数字を読み上げ
+    if (isInitialized) {
+      setTimeout(async () => {
+        await playNumber(target);
+      }, 500); // 少し遅延して読み上げ
+    }
   };
 
   // 初回実行時に問題を生成
@@ -75,7 +85,12 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
     console.log('Starting handleAnswerSelect with answer:', answer);
     
     try {
-      // 音声処理を完全にスキップして状態更新のみ実行
+      // 最初のタップで音声を初期化
+      if (!isInitialized) {
+        await initializeAudio();
+        await preloadAudio();
+      }
+
       console.log('Setting selected answer and show result');
       setSelectedAnswer(answer);
       setShowResult(true);
@@ -83,7 +98,18 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
       
       if (answer === targetNumber) {
         console.log('Correct answer detected');
-        setScore(score + 1);
+        const newScore = score + 1;
+        setScore(newScore);
+        
+        // 正解時の効果音を再生
+        await playEffect('correct');
+        
+        // スコアが5の倍数の時は完了音声を再生
+        if (newScore % 5 === 0 && newScore > 0) {
+          setTimeout(async () => {
+            await playEffect('complete');
+          }, 1000);
+        }
         
         // 2秒後に次の問題へ
         setTimeout(() => {
@@ -92,6 +118,8 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
         }, 2000);
       } else {
         console.log('Incorrect answer detected');
+        // 不正解時の効果音を再生
+        await playEffect('incorrect');
       }
       
       console.log('handleAnswerSelect completed successfully');
