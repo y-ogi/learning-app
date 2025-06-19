@@ -1,0 +1,26 @@
+{
+  "name": "数字を覚えよう！",
+  "short_name": "数字学習",
+  "description": "3歳児向けの1から30まで英語で数字を学ぶアプリ",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#4F46E5",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "kids"],
+  "lang": "ja"
+}

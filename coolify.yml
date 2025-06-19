@@ -1,0 +1,47 @@
+# Coolify 設定ファイル
+# 数字学習PWAアプリ用
+
+version: '1'
+name: learning-app
+description: "3歳児向け数字学習PWAアプリ"
+
+# ビルド設定
+build:
+  dockerfile: Dockerfile
+  context: .
+
+# 環境変数
+environment:
+  NODE_ENV: production
+
+# ポート設定
+ports:
+  - "80:80"
+
+# ヘルスチェック
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost/health"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s
+
+# 再起動ポリシー
+restart: unless-stopped
+
+# ラベル（Coolify用）
+labels:
+  - "coolify.managed=true"
+  - "coolify.name=learning-app"
+  - "coolify.type=application"
+  - "coolify.framework=react"
+
+# リソース制限
+deploy:
+  resources:
+    limits:
+      memory: 512M
+      cpus: '0.5'
+    reservations:
+      memory: 256M
+      cpus: '0.25' 

@@ -1,121 +1,54 @@
-# 数字学習アプリ - Learning Numbers 1-30
+# React + TypeScript + Vite
 
-3歳児向けの数字学習PWAアプリケーション。1から30までの数字を英語で楽しく学べます。
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 特徴
+Currently, two official plugins are available:
 
-- 🔢 1〜30の数字を大きく表示
-- 🔊 タップで英語音声読み上げ
-- 🎮 楽しいゲームモード
-- 📱 iPad最適化
-- 🌐 オフライン対応（PWA）
-- 👶 3歳児でも使いやすいシンプルUI
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 機能
+## Expanding the ESLint configuration
 
-### 数字表示モード
-- 大きな数字表示
-- タップで英語発音（one, two, three...）
-- 前後の数字へ簡単移動
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-### カウント練習ゲーム
-- かわいい動物や果物を数える
-- 難易度別（1-10、11-20、21-30）
-- 正解時の楽しいアニメーション
-
-### 数字当てゲーム
-- 音声を聞いて正しい数字を選ぶ
-- 3つの選択肢から選択
-- 連続正解でレベルアップ
-
-## インストール方法
-
-### 開発環境
-
-```bash
-# リポジトリをクローン
-git clone [repository-url]
-cd learning-app
-
-# 依存関係をインストール
-npm install
-
-# 開発サーバーを起動
-npm run dev
+```js
+export default tseslint.config({
+  extends: [
+    // Remove ...tseslint.configs.recommended and replace with this
+    ...tseslint.configs.recommendedTypeChecked,
+    // Alternatively, use this for stricter rules
+    ...tseslint.configs.strictTypeChecked,
+    // Optionally, add this for stylistic rules
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-### iPadでの使用方法
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-1. アプリをデプロイしたURLにSafariでアクセス
-2. 共有ボタンをタップ
-3. 「ホーム画面に追加」を選択
-4. アプリ名を確認して「追加」
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## 技術スタック
-
-- **フロントエンド**: React + TypeScript
-- **ビルドツール**: Vite
-- **スタイリング**: Tailwind CSS
-- **音声処理**: Howler.js
-- **PWA**: Service Worker + Web App Manifest
-
-## 開発
-
-### 必要な環境
-- Node.js 18.x以上
-- npm または yarn
-
-### コマンド
-
-```bash
-# 開発サーバー
-npm run dev
-
-# ビルド
-npm run build
-
-# ビルドプレビュー
-npm run preview
-
-# 型チェック
-npm run typecheck
-
-# リント
-npm run lint
+export default tseslint.config({
+  plugins: {
+    // Add the react-x and react-dom plugins
+    'react-x': reactX,
+    'react-dom': reactDom,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended typescript rules
+    ...reactX.configs['recommended-typescript'].rules,
+    ...reactDom.configs.recommended.rules,
+  },
+})
 ```
-
-### プロジェクト構造
-
-```
-learning-app/
-├── public/          # 静的ファイル
-│   ├── sounds/      # 音声ファイル
-│   └── icons/       # PWAアイコン
-├── src/
-│   ├── components/  # Reactコンポーネント
-│   ├── contexts/    # Context API
-│   ├── hooks/       # カスタムフック
-│   └── utils/       # ユーティリティ
-└── docs/           # ドキュメント
-```
-
-## ドキュメント
-
-詳細なドキュメントは `/docs` ディレクトリを参照してください：
-
-- [要件定義書](docs/requirements.md)
-- [技術仕様書](docs/technical-spec.md)
-- [UIデザイン仕様](docs/ui-design.md)
-- [実装ガイド](docs/implementation-guide.md)
-
-## ライセンス
-
-[ライセンスを選択してください]
-
-## 貢献
-
-プルリクエストは歓迎します。大きな変更の場合は、まずissueを作成して変更内容を議論してください。
-
-## サポート
-
-問題や質問がある場合は、GitHubのissueを作成してください。

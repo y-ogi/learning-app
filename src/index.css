@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+  
+  /* タッチ最適化 */
+  .touch-target {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    
+    /* iOS Safari でのクリック遅延を削除 */
+    -webkit-touch-callout: none;
+    -webkit-user-callout: none;
+    
+    /* タッチ操作の改善 */
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    
+    /* クリック可能領域を明確にする */
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  /* ボタンのアクティブ状態を明確にする */
+  button.touch-target:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease-in-out;
+  }
+  
+  /* iOS Safari でのボタンスタイルをリセット */
+  button {
+    -webkit-appearance: none;
+    background: none;
+    border: none;
+  }
+}

@@ -22,18 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# PWA
-public/sw.js
-public/workbox-*.js
-
-# Audio files (if they are large and stored elsewhere)
-# public/sounds/numbers/*.mp3
-# public/sounds/effects/*.mp3

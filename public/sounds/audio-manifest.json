@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "numbers": {
+    "path": "/sounds/numbers/",
+    "format": "mp3",
+    "files": [
+      { "number": 1, "filename": "1.mp3", "text": "one" },
+      { "number": 2, "filename": "2.mp3", "text": "two" },
+      { "number": 3, "filename": "3.mp3", "text": "three" },
+      { "number": 4, "filename": "4.mp3", "text": "four" },
+      { "number": 5, "filename": "5.mp3", "text": "five" },
+      { "number": 6, "filename": "6.mp3", "text": "six" },
+      { "number": 7, "filename": "7.mp3", "text": "seven" },
+      { "number": 8, "filename": "8.mp3", "text": "eight" },
+      { "number": 9, "filename": "9.mp3", "text": "nine" },
+      { "number": 10, "filename": "10.mp3", "text": "ten" },
+      { "number": 11, "filename": "11.mp3", "text": "eleven" },
+      { "number": 12, "filename": "12.mp3", "text": "twelve" },
+      { "number": 13, "filename": "13.mp3", "text": "thirteen" },
+      { "number": 14, "filename": "14.mp3", "text": "fourteen" },
+      { "number": 15, "filename": "15.mp3", "text": "fifteen" },
+      { "number": 16, "filename": "16.mp3", "text": "sixteen" },
+      { "number": 17, "filename": "17.mp3", "text": "seventeen" },
+      { "number": 18, "filename": "18.mp3", "text": "eighteen" },
+      { "number": 19, "filename": "19.mp3", "text": "nineteen" },
+      { "number": 20, "filename": "20.mp3", "text": "twenty" },
+      { "number": 21, "filename": "21.mp3", "text": "twenty-one" },
+      { "number": 22, "filename": "22.mp3", "text": "twenty-two" },
+      { "number": 23, "filename": "23.mp3", "text": "twenty-three" },
+      { "number": 24, "filename": "24.mp3", "text": "twenty-four" },
+      { "number": 25, "filename": "25.mp3", "text": "twenty-five" },
+      { "number": 26, "filename": "26.mp3", "text": "twenty-six" },
+      { "number": 27, "filename": "27.mp3", "text": "twenty-seven" },
+      { "number": 28, "filename": "28.mp3", "text": "twenty-eight" },
+      { "number": 29, "filename": "29.mp3", "text": "twenty-nine" },
+      { "number": 30, "filename": "30.mp3", "text": "thirty" }
+    ]
+  },
+  "effects": {
+    "path": "/sounds/effects/",
+    "format": "mp3",
+    "files": [
+      { "id": "correct", "filename": "correct.mp3", "description": "正解時の効果音" },
+      { "id": "incorrect", "filename": "incorrect.mp3", "description": "不正解時の効果音" },
+      { "id": "complete", "filename": "complete.mp3", "description": "完了時の効果音" }
+    ]
+  }
+}
