@@ -154,6 +154,8 @@ export class AudioManager {
           },
           onloaderror: (_id, error) => {
             console.error(`Load error for ${url}:`, error);
+            // ロードエラー時もフォールバックを試す
+            this.fallbackPlay(url);
           },
         });
         this.audioCache[url] = sound;
@@ -181,9 +183,23 @@ export class AudioManager {
     try {
       const audio = new Audio(url);
       audio.volume = this.volume;
-      audio.play()
-        .then(() => console.log(`Fallback audio playing: ${url}`))
-        .catch(err => console.error(`Fallback audio failed: ${err}`));
+      
+      // イベントリスナーを追加してデバッグ
+      audio.addEventListener('canplay', () => {
+        console.log(`Fallback audio can play: ${url}`);
+        audio.play()
+          .then(() => console.log(`Fallback audio playing: ${url}`))
+          .catch(err => console.error(`Fallback audio play failed: ${err}`));
+      });
+      
+      audio.addEventListener('error', (e) => {
+        console.error(`Fallback audio error event:`, e);
+        console.error(`Audio error code: ${audio.error?.code}, message: ${audio.error?.message}`);
+      });
+      
+      // srcを設定してロード開始
+      audio.src = url;
+      audio.load();
     } catch (error) {
       console.error(`Fallback audio error: ${error}`);
     }
