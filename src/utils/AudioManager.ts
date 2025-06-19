@@ -29,55 +29,14 @@ export class AudioManager {
 
     console.log('Starting AudioManager initialization...');
     
-    // iOS Safariのための無音再生で音声コンテキストを開始
-    console.log('Creating silent sound Howl instance...');
-    const silentSound = new Howl({
-      src: ['data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAzA'],
-      volume: 0.01,
-      html5: true, // iOS Safari対応のためhtml5モードを有効化
-      autoplay: false,
-      onload: () => {
-        console.log('Silent sound loaded successfully');
-      },
-      onloaderror: (_id, error) => {
-        console.error('Silent sound load error:', error);
-      }
-    });
-
-    try {
-      // Howler.jsのグローバル設定
-      Howler.autoUnlock = true;
-      Howler.html5PoolSize = 10;
-      
-      await new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          console.error('Silent sound play timeout after 5 seconds');
-          reject(new Error('Audio initialization timeout'));
-        }, 5000);
-
-        silentSound.once('play', () => {
-          clearTimeout(timeout);
-          console.log('Silent sound played successfully');
-          resolve();
-        });
-        
-        silentSound.once('playerror', (_id, error) => {
-          clearTimeout(timeout);
-          console.error('Silent sound play error:', error);
-          reject(new Error('Audio initialization failed'));
-        });
-        
-        console.log('Attempting to play silent sound...');
-        const playResult = silentSound.play();
-        console.log('Silent sound play() called, result:', playResult);
-      });
-      
-      this.isInitialized = true;
-      console.log('AudioManager initialized successfully');
-    } catch (error) {
-      console.error('Failed to initialize AudioManager:', error);
-      throw error;
-    }
+    // Howler.jsのグローバル設定
+    Howler.autoUnlock = true;
+    Howler.html5PoolSize = 10;
+    Howler.usingWebAudio = false; // Web Audio APIを無効化してHTML5 Audioのみ使用
+    
+    // シンプルに初期化完了とする
+    this.isInitialized = true;
+    console.log('AudioManager initialized successfully (simplified)');
   }
 
   /**
@@ -181,11 +140,17 @@ export class AudioManager {
           volume: this.volume,
           html5: true, // iOS Safari対応のためhtml5モードを有効化
           format: ['mp3'], // フォーマットを明示的に指定
+          preload: true, // 事前読み込みを有効化
           onplay: () => {
             console.log(`Successfully started playing: ${url}`);
           },
+          onend: () => {
+            console.log(`Finished playing: ${url}`);
+          },
           onplayerror: (_id, error) => {
             console.error(`Play error for ${url}:`, error);
+            // エラー時は通常のHTML5 Audioで再試行
+            this.fallbackPlay(url);
           },
           onloaderror: (_id, error) => {
             console.error(`Load error for ${url}:`, error);
@@ -205,6 +170,22 @@ export class AudioManager {
       sound.play();
     } catch (error) {
       console.error(`Failed to play audio: ${url}`, error);
+    }
+  }
+
+  /**
+   * フォールバック: 通常のHTML5 Audioで再生
+   */
+  private fallbackPlay(url: string): void {
+    console.log(`Trying fallback HTML5 Audio for: ${url}`);
+    try {
+      const audio = new Audio(url);
+      audio.volume = this.volume;
+      audio.play()
+        .then(() => console.log(`Fallback audio playing: ${url}`))
+        .catch(err => console.error(`Fallback audio failed: ${err}`));
+    } catch (error) {
+      console.error(`Fallback audio error: ${error}`);
     }
   }
 
