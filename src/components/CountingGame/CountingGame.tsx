@@ -61,17 +61,7 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
     setSelectedAnswer(null);
     setShowResult(false);
 
-    // 音声が初期化されていれば、目標数字を読み上げ
-    console.log(`Audio check - isInitialized: ${isInitialized}, target: ${target}`);
-    if (isInitialized) {
-      console.log('Audio is initialized, playing number after delay...');
-      setTimeout(async () => {
-        console.log(`About to play number: ${target}`);
-        await playNumber(target);
-      }, 500); // 少し遅延して読み上げ
-    } else {
-      console.log('Audio not initialized yet');
-    }
+    // 問題生成時は音声を再生しない（答えがわかってしまうため）
   };
 
   // 初回実行時に問題を生成
