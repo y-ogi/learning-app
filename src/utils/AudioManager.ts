@@ -31,6 +31,7 @@ export class AudioManager {
     const silentSound = new Howl({
       src: ['data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAzA'],
       volume: 0.01,
+      html5: true, // iOS Safari対応のためhtml5モードを有効化
     });
 
     try {
@@ -58,6 +59,8 @@ export class AudioManager {
       const sound = new Howl({
         src: [url],
         preload: true,
+        html5: true, // iOS Safari対応のためhtml5モードを有効化
+        format: ['mp3'], // フォーマットを明示的に指定
         onload: () => {
           this.audioCache[url] = sound;
           resolve();
@@ -132,6 +135,8 @@ export class AudioManager {
         sound = new Howl({
           src: [url],
           volume: this.volume,
+          html5: true, // iOS Safari対応のためhtml5モードを有効化
+          format: ['mp3'], // フォーマットを明示的に指定
         });
         this.audioCache[url] = sound;
       }
