@@ -27,7 +27,6 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
     isInitialized,
     initializeAudio,
     preloadAudio,
-    playNumber,
     playEffect,
   } = useAudio();
 
