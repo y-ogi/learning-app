@@ -27,17 +27,30 @@ export class AudioManager {
   async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
+    console.log('Starting AudioManager initialization...');
+    
     // iOS Safariのための無音再生で音声コンテキストを開始
     const silentSound = new Howl({
       src: ['data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAzA'],
       volume: 0.01,
       html5: true, // iOS Safari対応のためhtml5モードを有効化
+      autoplay: false,
     });
 
     try {
+      // Howler.jsのグローバル設定
+      Howler.autoUnlock = true;
+      Howler.html5PoolSize = 10;
+      
       await new Promise<void>((resolve, reject) => {
-        silentSound.once('play', () => resolve());
-        silentSound.once('playerror', () => reject(new Error('Audio initialization failed')));
+        silentSound.once('play', () => {
+          console.log('Silent sound played successfully');
+          resolve();
+        });
+        silentSound.once('playerror', (id, error) => {
+          console.error('Silent sound play error:', error);
+          reject(new Error('Audio initialization failed'));
+        });
         silentSound.play();
       });
       
@@ -107,7 +120,12 @@ export class AudioManager {
    * 数字を英語で再生
    */
   async playNumber(number: number): Promise<void> {
-    if (!this.soundEnabled || !this.isInitialized) return;
+    console.log(`playNumber called with: ${number}, soundEnabled: ${this.soundEnabled}, isInitialized: ${this.isInitialized}`);
+    
+    if (!this.soundEnabled || !this.isInitialized) {
+      console.log('Skipping playback - not enabled or not initialized');
+      return;
+    }
     
     const url = `/sounds/numbers/${number}.mp3`;
     await this.playSound(url);
@@ -117,7 +135,12 @@ export class AudioManager {
    * 効果音を再生
    */
   async playEffect(effect: 'correct' | 'incorrect' | 'complete'): Promise<void> {
-    if (!this.soundEnabled || !this.isInitialized) return;
+    console.log(`playEffect called with: ${effect}, soundEnabled: ${this.soundEnabled}, isInitialized: ${this.isInitialized}`);
+    
+    if (!this.soundEnabled || !this.isInitialized) {
+      console.log('Skipping effect playback - not enabled or not initialized');
+      return;
+    }
     
     const url = `/sounds/effects/${effect}.mp3`;
     await this.playSound(url);
@@ -127,26 +150,40 @@ export class AudioManager {
    * 音声を再生
    */
   private async playSound(url: string): Promise<void> {
+    console.log(`Attempting to play sound: ${url}`);
+    
     try {
       // キャッシュから取得または新規作成
       let sound = this.audioCache[url];
       
       if (!sound) {
+        console.log(`Creating new Howl instance for: ${url}`);
         sound = new Howl({
           src: [url],
           volume: this.volume,
           html5: true, // iOS Safari対応のためhtml5モードを有効化
           format: ['mp3'], // フォーマットを明示的に指定
+          onplay: () => {
+            console.log(`Successfully started playing: ${url}`);
+          },
+          onplayerror: (id, error) => {
+            console.error(`Play error for ${url}:`, error);
+          },
+          onloaderror: (id, error) => {
+            console.error(`Load error for ${url}:`, error);
+          },
         });
         this.audioCache[url] = sound;
       }
 
       // 既に再生中の場合は停止してから再生
       if (sound.playing()) {
+        console.log('Stopping current playback before new play');
         sound.stop();
       }
 
       sound.volume(this.volume);
+      console.log(`Playing sound with volume: ${this.volume}`);
       sound.play();
     } catch (error) {
       console.error(`Failed to play audio: ${url}`, error);
