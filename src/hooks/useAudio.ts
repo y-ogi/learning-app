@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
-import { audioManager } from '../utils/AudioManager';
+import { simpleAudioManager } from '../utils/SimpleAudioManager';
 
 export const useAudio = () => {
-  const [isInitialized, setIsInitialized] = useState(audioManager.isAudioInitialized());
+  const [isInitialized, setIsInitialized] = useState(simpleAudioManager.isAudioInitialized());
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +19,7 @@ export const useAudio = () => {
     try {
       setIsLoading(true);
       setError(null);
-      await audioManager.initialize();
+      await simpleAudioManager.initialize();
       setIsInitialized(true);
     } catch (err) {
       setError('音声の初期化に失敗しました');
@@ -30,23 +30,12 @@ export const useAudio = () => {
   }, [isInitialized, isLoading]);
 
   /**
-   * 音声ファイルをプリロード
+   * 音声ファイルをプリロード（SimpleAudioManagerでは不要）
    */
   const preloadAudio = useCallback(async () => {
-    if (!isInitialized) return;
-
-    try {
-      setIsLoading(true);
-      await Promise.all([
-        audioManager.preloadNumbers(),
-        audioManager.preloadEffects(),
-      ]);
-    } catch (err) {
-      console.error('Audio preload error:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isInitialized]);
+    // SimpleAudioManagerでは事前読み込みしない
+    return;
+  }, []);
 
   /**
    * 数字を再生
@@ -56,7 +45,7 @@ export const useAudio = () => {
       console.warn('Audio not initialized. Please initialize first.');
       return;
     }
-    await audioManager.playNumber(number);
+    await simpleAudioManager.playNumber(number);
   }, [isInitialized]);
 
   /**
@@ -67,35 +56,28 @@ export const useAudio = () => {
       console.warn('Audio not initialized. Please initialize first.');
       return;
     }
-    await audioManager.playEffect(effect);
+    await simpleAudioManager.playEffect(effect);
   }, [isInitialized]);
 
   /**
-   * 音量を設定
+   * 音量を設定（SimpleAudioManagerでは未実装）
    */
   const setVolume = useCallback((volume: number) => {
-    audioManager.setVolume(volume);
+    // 未実装
   }, []);
 
   /**
-   * 音声の有効/無効を切り替え
+   * 音声の有効/無効を切り替え（SimpleAudioManagerでは未実装）
    */
   const setSoundEnabled = useCallback((enabled: boolean) => {
-    audioManager.setSoundEnabled(enabled);
+    // 未実装
   }, []);
 
   /**
-   * 全ての音声を停止
+   * 全ての音声を停止（SimpleAudioManagerでは未実装）
    */
   const stopAll = useCallback(() => {
-    audioManager.stopAll();
-  }, []);
-
-  // クリーンアップ
-  useEffect(() => {
-    return () => {
-      audioManager.stopAll();
-    };
+    // 未実装
   }, []);
 
   return {
@@ -109,7 +91,7 @@ export const useAudio = () => {
     setVolume,
     setSoundEnabled,
     stopAll,
-    getVolume: audioManager.getVolume.bind(audioManager),
-    isSoundEnabled: audioManager.isSoundEnabled.bind(audioManager),
+    getVolume: () => 1.0,
+    isSoundEnabled: () => true,
   };
 };
