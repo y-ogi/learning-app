@@ -30,11 +30,18 @@ export class AudioManager {
     console.log('Starting AudioManager initialization...');
     
     // iOS Safariのための無音再生で音声コンテキストを開始
+    console.log('Creating silent sound Howl instance...');
     const silentSound = new Howl({
       src: ['data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAzA'],
       volume: 0.01,
       html5: true, // iOS Safari対応のためhtml5モードを有効化
       autoplay: false,
+      onload: () => {
+        console.log('Silent sound loaded successfully');
+      },
+      onloaderror: (_id, error) => {
+        console.error('Silent sound load error:', error);
+      }
     });
 
     try {
@@ -43,15 +50,26 @@ export class AudioManager {
       Howler.html5PoolSize = 10;
       
       await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          console.error('Silent sound play timeout after 5 seconds');
+          reject(new Error('Audio initialization timeout'));
+        }, 5000);
+
         silentSound.once('play', () => {
+          clearTimeout(timeout);
           console.log('Silent sound played successfully');
           resolve();
         });
+        
         silentSound.once('playerror', (_id, error) => {
+          clearTimeout(timeout);
           console.error('Silent sound play error:', error);
           reject(new Error('Audio initialization failed'));
         });
-        silentSound.play();
+        
+        console.log('Attempting to play silent sound...');
+        const playResult = silentSound.play();
+        console.log('Silent sound play() called, result:', playResult);
       });
       
       this.isInitialized = true;

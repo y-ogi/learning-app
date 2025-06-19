@@ -93,8 +93,15 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
     try {
       // 最初のタップで音声を初期化
       if (!isInitialized) {
-        await initializeAudio();
-        await preloadAudio();
+        console.log('First tap detected, initializing audio...');
+        try {
+          await initializeAudio();
+          console.log('Audio initialization completed');
+          await preloadAudio();
+          console.log('Audio preload completed');
+        } catch (error) {
+          console.error('Failed to initialize audio:', error);
+        }
       }
 
       console.log('Setting selected answer and show result');
