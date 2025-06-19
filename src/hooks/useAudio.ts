@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { audioManager } from '../utils/AudioManager';
 
 export const useAudio = () => {
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(audioManager.isAudioInitialized());
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -11,7 +11,10 @@ export const useAudio = () => {
    * ボタンクリックなどのユーザー操作から呼び出す必要がある
    */
   const initializeAudio = useCallback(async () => {
-    if (isInitialized) return;
+    if (isInitialized || isLoading) {
+      console.log('Already initialized or loading, skipping...');
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -24,7 +27,7 @@ export const useAudio = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [isInitialized]);
+  }, [isInitialized, isLoading]);
 
   /**
    * 音声ファイルをプリロード
