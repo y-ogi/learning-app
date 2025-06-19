@@ -3,8 +3,10 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-// Service Worker登録
-if ('serviceWorker' in navigator) {
+// Service Worker登録（開発中は無効化可能）
+const ENABLE_SERVICE_WORKER = true; // falseにすると無効化
+
+if ('serviceWorker' in navigator && ENABLE_SERVICE_WORKER) {
   window.addEventListener('load', async () => {
     try {
       const registration = await navigator.serviceWorker.register('/sw.js');

@@ -1,5 +1,5 @@
 // バージョンを更新すると古いキャッシュが削除される
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = `learning-app-${CACHE_VERSION}`;
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
@@ -61,28 +61,25 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // 音声ファイルの場合
+  // 音声ファイルの場合（常にネットワークから取得）
   if (url.pathname.includes('/sounds/')) {
     event.respondWith(
-      caches.match(request)
+      fetch(request)
         .then((response) => {
-          if (response) {
-            return response;
-          }
-          
-          return fetch(request)
-            .then((fetchResponse) => {
-              const responseClone = fetchResponse.clone();
-              caches.open(STATIC_CACHE)
-                .then((cache) => {
-                  cache.put(request, responseClone);
-                });
-              return fetchResponse;
-            });
+          // 音声ファイルはキャッシュしない（iOS Safari対策）
+          return response;
         })
         .catch(() => {
-          // オフライン時のフォールバック
-          console.log('Audio file not available offline:', url.pathname);
+          // オフライン時のみキャッシュから取得
+          return caches.match(request)
+            .then((response) => {
+              if (response) {
+                console.log('Serving audio from cache:', url.pathname);
+                return response;
+              }
+              console.log('Audio file not available:', url.pathname);
+              return new Response('Audio not available', { status: 404 });
+            });
         })
     );
     return;
