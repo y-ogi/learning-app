@@ -1,6 +1,8 @@
-const CACHE_NAME = 'learning-app-v1';
-const STATIC_CACHE = 'static-v1';
-const DYNAMIC_CACHE = 'dynamic-v1';
+// バージョンを更新すると古いキャッシュが削除される
+const CACHE_VERSION = 'v2';
+const CACHE_NAME = `learning-app-${CACHE_VERSION}`;
+const STATIC_CACHE = `static-${CACHE_VERSION}`;
+const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
 
 // キャッシュするファイル
 const STATIC_FILES = [
@@ -42,7 +44,8 @@ self.addEventListener('activate', (event) => {
       .then((keyList) => {
         return Promise.all(
           keyList.map((key) => {
-            if (key !== STATIC_CACHE && key !== DYNAMIC_CACHE) {
+            // 現在のバージョン以外のキャッシュをすべて削除
+            if (!key.includes(CACHE_VERSION)) {
               console.log('Removing old cache:', key);
               return caches.delete(key);
             }
@@ -85,21 +88,50 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // HTMLページの場合
+  // HTMLページの場合（常に最新を取得）
   if (request.mode === 'navigate') {
     event.respondWith(
-      caches.match(request)
+      fetch(request)
         .then((response) => {
-          return response || fetch(request);
+          // 成功したら新しいHTMLをキャッシュに保存
+          const responseClone = response.clone();
+          caches.open(DYNAMIC_CACHE)
+            .then((cache) => {
+              cache.put(request, responseClone);
+            });
+          return response;
         })
         .catch(() => {
-          return caches.match('/index.html');
+          // オフライン時はキャッシュから返す
+          return caches.match(request)
+            .then((response) => response || caches.match('/index.html'));
         })
     );
     return;
   }
 
-  // その他のリソース
+  // JSやCSSファイルの場合（ネットワーク優先）
+  if (url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // 成功したら新しいファイルをキャッシュに保存
+          const responseClone = response.clone();
+          caches.open(DYNAMIC_CACHE)
+            .then((cache) => {
+              cache.put(request, responseClone);
+            });
+          return response;
+        })
+        .catch(() => {
+          // オフライン時はキャッシュから返す
+          return caches.match(request);
+        })
+    );
+    return;
+  }
+
+  // その他のリソース（キャッシュ優先）
   event.respondWith(
     caches.match(request)
       .then((response) => {
