@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { NumberDisplay } from './components/NumberDisplay/NumberDisplay';
 import { CountingGame } from './components/CountingGame/CountingGame';
+import { DebugLogger } from './components/DebugLogger';
 
 type GameMode = 'home' | 'numbers' | 'counting';
 
 function App() {
   const [currentMode, setCurrentMode] = useState<GameMode>('home');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
+  const [showDebug, setShowDebug] = useState(false);
 
   if (currentMode === 'numbers') {
     return (
@@ -19,7 +21,14 @@ function App() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
         </button>
+        <button
+          onClick={() => setShowDebug(!showDebug)}
+          className="absolute top-4 right-4 z-10 p-2 bg-gray-800 text-white rounded-lg shadow-md hover:shadow-lg text-xs"
+        >
+          {showDebug ? 'Hide' : 'Show'} Debug
+        </button>
         <NumberDisplay />
+        {showDebug && <DebugLogger />}
       </div>
     );
   }
@@ -35,7 +44,14 @@ function App() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
         </button>
+        <button
+          onClick={() => setShowDebug(!showDebug)}
+          className="absolute top-4 right-4 z-10 p-2 bg-gray-800 text-white rounded-lg shadow-md hover:shadow-lg text-xs"
+        >
+          {showDebug ? 'Hide' : 'Show'} Debug
+        </button>
         <CountingGame difficulty={difficulty} />
+        {showDebug && <DebugLogger />}
       </div>
     );
   }
