@@ -33,7 +33,6 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
 
   // 新しい問題を生成
   const generateNewProblem = async () => {
-    console.log('=== generateNewProblem called ===');
     const range = difficultyRanges[difficulty];
     const target = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
     setTargetNumber(target);
@@ -70,37 +69,38 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficulty]);
 
-  // 音声の初期化
+  // 音声の初期化とプリロード
   useEffect(() => {
-    if (isInitialized) {
-      preloadAudio();
-    }
-  }, [isInitialized, preloadAudio]);
+    // 自動的に初期化を試みる（ユーザー操作は後で）
+    const init = async () => {
+      try {
+        await initializeAudio();
+        await preloadAudio();
+      } catch (error) {
+        // 初回は失敗する可能性があるが、ユーザー操作時に再試行される
+        console.log('Initial audio setup skipped, will retry on user interaction');
+      }
+    };
+    init();
+  }, [initializeAudio, preloadAudio]);
 
   const handleAnswerSelect = async (answer: number) => {
-    console.log('Starting handleAnswerSelect with answer:', answer);
-    
     try {
-      // 最初のタップで音声を初期化
+      // 最初のタップで音声を初期化（既に初期化済みならスキップ）
       if (!isInitialized) {
-        console.log('First tap detected, initializing audio...');
         try {
           await initializeAudio();
-          console.log('Audio initialization completed');
           await preloadAudio();
-          console.log('Audio preload completed');
         } catch (error) {
           console.error('Failed to initialize audio:', error);
         }
       }
 
-      console.log('Setting selected answer and show result');
       setSelectedAnswer(answer);
       setShowResult(true);
       setAttempts(attempts + 1);
       
       if (answer === targetNumber) {
-        console.log('Correct answer detected');
         const newScore = score + 1;
         setScore(newScore);
         
@@ -116,16 +116,12 @@ export const CountingGame: React.FC<CountingGameProps> = ({ difficulty = 'easy' 
         
         // 2秒後に次の問題へ
         setTimeout(() => {
-          console.log('Generating new problem after correct answer');
           generateNewProblem();
         }, 2000);
       } else {
-        console.log('Incorrect answer detected');
         // 不正解時の効果音を再生
         await playEffect('incorrect');
       }
-      
-      console.log('handleAnswerSelect completed successfully');
     } catch (error) {
       console.error('Error in handleAnswerSelect:', error);
     }
