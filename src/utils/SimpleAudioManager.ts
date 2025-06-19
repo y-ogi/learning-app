@@ -18,26 +18,24 @@ export class SimpleAudioManager {
 
   async playNumber(number: number): Promise<void> {
     const url = `/sounds/numbers/${number}.mp3`;
-    await this.playSound(url);
+    this.playSound(url);
   }
 
   async playEffect(effect: 'correct' | 'incorrect' | 'complete'): Promise<void> {
     const url = `/sounds/effects/${effect}.mp3`;
-    await this.playSound(url);
+    this.playSound(url);
   }
 
-  private async playSound(url: string): Promise<void> {
-    try {
-      // 毎回新しいAudioインスタンスを作成（キャッシュ問題を回避）
-      const audio = new Audio(url);
-      audio.volume = 1.0;
-      
-      // 再生を試みる
-      await audio.play();
-      console.log(`Playing: ${url}`);
-    } catch (error) {
-      console.error(`Failed to play: ${url}`, error);
-    }
+  private playSound(url: string): void {
+    console.log(`Playing: ${url}`);
+    
+    // シンプルに新しいAudioを作成して再生
+    const audio = new Audio(url);
+    
+    // 再生を試みる（エラーは無視）
+    audio.play().catch(error => {
+      console.log(`Could not play ${url}:`, error.message);
+    });
   }
 
   isAudioInitialized(): boolean {
