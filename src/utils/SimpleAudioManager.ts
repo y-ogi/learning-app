@@ -1,6 +1,5 @@
 export class SimpleAudioManager {
   private static instance: SimpleAudioManager;
-  private audioCache: Map<string, HTMLAudioElement> = new Map();
   private isInitialized = false;
 
   private constructor() {}

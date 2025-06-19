@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { simpleAudioManager } from '../utils/SimpleAudioManager';
 
 export const useAudio = () => {
@@ -62,14 +62,14 @@ export const useAudio = () => {
   /**
    * 音量を設定（SimpleAudioManagerでは未実装）
    */
-  const setVolume = useCallback((volume: number) => {
+  const setVolume = useCallback((_volume: number) => {
     // 未実装
   }, []);
 
   /**
    * 音声の有効/無効を切り替え（SimpleAudioManagerでは未実装）
    */
-  const setSoundEnabled = useCallback((enabled: boolean) => {
+  const setSoundEnabled = useCallback((_enabled: boolean) => {
     // 未実装
   }, []);
 
